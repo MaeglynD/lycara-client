@@ -23,5 +23,7 @@ module.exports = {
 		'import/no-named-as-default-member': 'off',
 		'import/extensions': 'off',
 		'consistent-return': 0,
+		radix: 'off',
+		'no-prototype-builtins': 'off',
 	},
 };

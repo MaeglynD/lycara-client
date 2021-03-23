@@ -26,7 +26,7 @@ const cors = (req, res, next) => {
 };
 
 // Fake lag
-app.use((req, res, next) => setTimeout(next, 1000));
+// app.use((req, res, next) => setTimeout(next, 1000));
 
 // Cors
 app.use(cors);

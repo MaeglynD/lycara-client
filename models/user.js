@@ -9,7 +9,8 @@ export async function getCredentials(email, password) {
 
 	// Query to find user by email
 	const userByEmailQuery = `
-		SELECT * FROM	users
+		SELECT * 
+		FROM	users
 		WHERE email = ${pool.escape(email)}
 		LIMIT 1
 	`;
@@ -56,21 +57,70 @@ export async function register(email, password) {
 }
 
 // Find a user by id
-export async function findById(id) {
+export async function findById(userId) {
 	// Query to find user by id
 	const userById = `
-		SELECT * FROM users
-		WHERE id = ${pool.escape(id)}	
+		SELECT * 
+		FROM users
+		WHERE id = ${pool.escape(userId)}	
 	`;
 
 	// Execute query
 	const user = await queryPool(userById);
 
 	// Return the found user
-	return user;
+	return user[0];
 }
 
 // Restricted resopnse
 export async function restrictedRequest() {
 	return 'this is a restricted response...';
+}
+
+// Update a users profile picture
+export async function setProfilePicture(url, userId) {
+	const setProfileQuery = `
+		UPDATE USERS
+		SET profile_url = ${pool.escape(url)}
+		WHERE id = ${pool.escape(userId)}
+	`;
+
+	// Execute...
+	await queryPool(setProfileQuery);
+}
+
+// Get all user info (a wrapper for findUserById)
+export async function getProfileInfo(userId) {
+	// Query to find user by id
+	const userProfileQuery = `
+		SELECT id, email, profile_url 
+		FROM users
+		WHERE id = ${pool.escape(userId)}	
+	`;
+
+	// Execute query
+	const userProfileInfo = await queryPool(userProfileQuery);
+
+	// Ensure there is a found user
+	if (!userProfileInfo.length) {
+		throw new Error('No user found');
+	}
+	// Return the found profile info
+	return userProfileInfo[0];
+}
+
+// Get a list of all users
+export async function getAllUsers() {
+	// Query to get all users
+	const allUsersQuery = `
+		SELECT *
+		FROM users
+		LIMIT 1000
+	`;
+
+	// Execute query
+	const allUsers = await queryPool(allUsersQuery);
+
+	// Return all users
+	return allUsers;
 }
