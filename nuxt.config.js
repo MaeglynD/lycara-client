@@ -30,7 +30,7 @@ export default {
       },
       {
         rel: 'stylesheet',
-        href: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css',
+        href: 'https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css',
       },
     ],
   },
@@ -42,6 +42,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/utils.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

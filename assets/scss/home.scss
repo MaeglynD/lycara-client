@@ -1,0 +1,33 @@
+@mixin widthHeightMax {
+  height: 100%;
+  width: 100%;
+}
+
+.l-map-container, .l-map, ::v-deep .mapboxgl-canvas-container, ::v-deep canvas{
+  @include widthHeightMax();
+}
+
+.l-map-container{
+  display: flex;
+
+  .l-users-container{
+    min-width: 300px;
+    background: #292930;
+  }
+
+  .l-map{
+    //
+
+    ::v-deep .mapboxgl-canvas-container{
+      //
+
+      canvas{
+
+        &:focus{
+          outline: none;
+        }
+
+      }
+    }
+  }
+}

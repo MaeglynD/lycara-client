@@ -2,15 +2,14 @@
   <div class="l-login-container">
     <div class="l-modal-container">
       <div class="l-header">
-        Welcome back
+        Register with Lycara
       </div>
       <div class="l-subheader">
-        Lycara is one valid set of credentials away!
+        Due to high demand, it may take a while to authorise new accounts
       </div>
       <v-form
         ref="loginForm"
         v-model="isLoginFormValid"
-        lazy-validation
       >
         <v-text-field
           v-model="username"
@@ -41,9 +40,22 @@
           :rules="passwordRules"
         />
 
-        <div class="l-text l-forgotten-password">
-          Forgotten password?
-        </div>
+        <v-text-field
+          v-model="duplicatePassword"
+          height="44"
+          dense
+          label="Password"
+          outlined
+          class="l-password"
+          autocomplete="off"
+          type="password"
+          :loading="isLoading"
+          required
+          maxlength="255"
+          :rules="[
+            duplicatePassword === password || `Passwords don't match`
+          ]"
+        />
 
         <v-btn
           block
@@ -52,14 +64,14 @@
           class="l-button"
           :loading="isLoading"
           :disabled="!isLoginFormValid"
-          @click="login"
+          @click="register"
         >
           Login
         </v-btn>
       </v-form>
 
       <div class="l-text l-register">
-        Don't have an account? Click here!
+        Already have an account? Log in!
       </div>
     </div>
   </div>
@@ -72,6 +84,7 @@ export default {
   data: () => ({
     username: '',
     password: '',
+    duplicatePassword: '',
     pageState: '',
     isLoginFormValid: true,
     passwordRules: [
@@ -83,9 +96,12 @@ export default {
   }),
 
   computed: {
+
+    // Check if the page is in a state of loading
     isLoading() {
       return this.pageState === 'loading';
     },
+
   },
 
   async mounted() {
@@ -101,7 +117,7 @@ export default {
   methods: {
 
     // API request to log the user in
-    async login() {
+    async register() {
       // Validate the form
       await this.$refs.loginForm.validate();
       // No valid form, no entry
@@ -114,7 +130,7 @@ export default {
         const { username, password } = this;
 
         // Make the request
-        await this.$axios.post('/login', {
+        await this.$axios.post('/register', {
           username, password,
         });
 
@@ -144,7 +160,7 @@ export default {
 
       // Listen for enter key, submit if pressed.
       if (key === 'Enter' || key === 13) {
-        this.login();
+        this.register();
       }
     },
   },
@@ -153,4 +169,5 @@ export default {
 
 <style scoped lang="scss">
 @import '~/assets/scss/login.scss';
+@import '~/assets/scss/register.scss';
 </style>
