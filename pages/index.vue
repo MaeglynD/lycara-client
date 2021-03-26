@@ -2,16 +2,17 @@
   <div class="l-test">
     <div> requests</div>
     <v-btn
-      v-for="x in [
+      v-for="request in [
+        authenticate,
         getUserInfo,
         getRestrictedRequest,
         setProfilePicture,
         getAllUsers
       ]"
-      :key="x.name"
-      @click="x"
+      :key="request.name"
+      @click="request(), logResponse()"
     >
-      {{ x.name }}
+      {{ request.name }}
     </v-btn>
 
     <div> pages </div>
@@ -38,10 +39,20 @@ export default {
 
   data: () => ({
     response: null,
+    username: '',
+    password: '',
   }),
 
   async mounted() {
-    //
+    // We keep local dev credentials in a seperate untracked file.
+    // If we're on the dev build we'll import them to speed up development
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line global-require
+      const { username, password } = require('../private');
+
+      this.username = username;
+      this.password = password;
+    }
   },
 
   methods: {
@@ -50,10 +61,27 @@ export default {
       this.$router.push({ path: `/${page}` });
     },
 
+    // API call to authenticate the user
+    async authenticate() {
+      const { username, password } = this;
+
+      this.$requestWrapper(async () => {
+        // Make the request
+        await this.$axios.post('/login', { username, password });
+
+        // Set the data
+        this.response = 'ok';
+      }, (err) => {
+        this.response = err;
+      });
+    },
+
+    // API call to get the current logged in user's info
     async getUserInfo() {
       this.$requestWrapper(async () => {
         // Make the request
         const result = await this.$axios.get('/profile');
+
         // Set the data
         this.response = result.data;
       }, (err) => {
@@ -64,6 +92,7 @@ export default {
       '🎉 Successfull request');
     },
 
+    // Get a restricted request (a request only available to authenticated members)
     async getRestrictedRequest() {
       this.$requestWrapper(async () => {
         // Make the request
@@ -74,6 +103,7 @@ export default {
       'successfull restricted request');
     },
 
+    // API call to set the profile picture
     async setProfilePicture() {
       this.$requestWrapper(async () => {
         // Make the request
@@ -86,6 +116,7 @@ export default {
       'profile picture set');
     },
 
+    // API call to set all users
     async getAllUsers() {
       this.$requestWrapper(async () => {
         // Make the request
@@ -94,6 +125,11 @@ export default {
         this.response = err;
       },
       'gotem');
+    },
+
+    // Its a mystery what this function does
+    logResponse() {
+      console.log(this.response);
     },
 
   },

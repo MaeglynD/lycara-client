@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { accessToken } from '../private';
 
 export default {
   name: 'App',
@@ -30,7 +31,6 @@ export default {
 
   data: () => ({
     requestResult: '',
-    accessToken: '',
     gps: {},
     users: [],
   }),
@@ -48,7 +48,9 @@ export default {
 
     async getAllUsers() {
       this.$requestWrapper(async () => {
-        this.users = await this.$axios.get('/users/all');
+        const { data } = await this.$axios.get('/users/all');
+
+        this.users = data;
       }, (err) => {
         //
       });
@@ -57,7 +59,7 @@ export default {
     async createMap() {
       // eslint-disable-next-line global-require
       const mapboxgl = require('mapbox-gl');
-      mapboxgl.accessToken = this.accessToken;
+      mapboxgl.accessToken = accessToken;
 
       // init the map
       this.map = new mapboxgl.Map({
@@ -73,6 +75,7 @@ export default {
 
       await navigator.geolocation.getCurrentPosition(({ coords }) => {
         const { latitude, longitude } = coords;
+
         this.map.panTo([longitude, latitude], { zoom: 15 });
       }, (err) => console.log(err));
     },
